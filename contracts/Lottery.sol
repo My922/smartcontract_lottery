@@ -10,26 +10,37 @@ contract Lottery {
     address payable[] public players;
     uint256 public usdEntryFee;
 
+    enum LOTTERY_STATE {
+        OPEN,
+        CLOSED,
+        CALCULATING_WINNER
+    }
+    LOTTERY_STATE public lottery_state;
+
     /**
      * Network: Rinkeby
      * Aggregator: ETH/USD
      * Address: 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
      */
-    constructor() public {
+    constructor(address _priceFeedAddress) public {
         // $50 minimum
-        // require(condition);
         usdEntryFee = 50 * (10**18);
-        ethUsdPriceFeed = AggregatorV3Interface(
-            0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
-        );
+        ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         admin = msg.sender;
+        lottery_state = LOTTERY_STATE.CLOSED;
     }
 
-    function enter() public {
+    function enter() public payable {
+        require(lottery_state == LOTTERY_STATE.OPEN);
+        require(msg.value >= getEntranceFee(), "You need more ETH! (50 ETH)");
         players.push(msg.sender);
     }
 
-    function getEntranceFee() public view returns (uint256) {}
+    function getEntranceFee() public view returns (uint256) {
+        uint256 adjustedPrice = getLatestPrice();
+        uint256 costToEnter = (usdEntryFee * (10**18)) / adjustedPrice;
+        return costToEnter;
+    }
 
     function startLottery() public {}
 
@@ -40,8 +51,8 @@ contract Lottery {
         _;
     }
 
-    function getLatestPrice() public view returns (int256) {
+    function getLatestPrice() public view returns (uint256) {
         (, int256 price, , , ) = ethUsdPriceFeed.latestRoundData();
-        return price;
+        return uint256(price) * (10**10);
     }
 }
