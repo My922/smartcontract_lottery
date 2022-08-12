@@ -3,13 +3,13 @@
 pragma solidity ^0.6.6;
 
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Lottery {
+contract Lottery is Ownable {
     AggregatorV3Interface internal ethUsdPriceFeed;
     address public admin;
     address payable[] public players;
     uint256 public usdEntryFee;
-
     enum LOTTERY_STATE {
         OPEN,
         CLOSED,
@@ -26,7 +26,7 @@ contract Lottery {
         // $50 minimum
         usdEntryFee = 50 * (10**18);
         ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
-        admin = msg.sender;
+        // admin = msg.sender;
         lottery_state = LOTTERY_STATE.CLOSED;
     }
 
@@ -42,9 +42,22 @@ contract Lottery {
         return costToEnter;
     }
 
-    function startLottery() public {}
+    function startLottery() public onlyOwner {
+        require(
+            lottery_state == LOTTERY_STATE.CLOSED,
+            "Can't start new lotteries yet!"
+        );
+        lottery_state == LOTTERY_STATE.OPEN;
+    }
 
-    function endLottery() public {}
+    function endLottery() public onlyOwner {
+        require(
+            lottery_state == LOTTERY_STATE.OPEN ||
+                lottery_state == LOTTERY_STATE.CALCULATING_WINNER,
+            "Can't close a closed lottery!"
+        );
+        lottery_state == LOTTERY_STATE.CLOSED;
+    }
 
     modifier onlyAdmin() {
         require(msg.sender == admin);
