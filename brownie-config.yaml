@@ -12,11 +12,17 @@ networks:
   rinkeby:
     vrf_coordinator: '0x271682DEB8C4E0901D1a1550aD2e64D568E69909'
     eth_usd_price_feed: '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
+    verify: True
+    link_token: '0x01BE23585060835E02B77ef475b0Cc51aA1e0709'
+    key_hash: '0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311'
+    fee: 100000000000000000
   mainnet-fork-dev:
     eth_usd_price_feed: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419'
   mainnet-fork:
     eth_usd_price_feed: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419'
   development:
     eth_usd_price_feed: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419'
+    key_hash: '0x2ed0feb3e7fd2022120aa84fab1945545a9f2ffc9076fd6156fa96eaff4c1311'
+    fee: 100000000000000000
 wallets:
   from_key: ${PRIVATE_KEY}

@@ -62,7 +62,7 @@ contract Lottery is Ownable, VRFConsumerBase {
             lottery_state == LOTTERY_STATE.CLOSED,
             "Can't start new lotteries yet!"
         );
-        lottery_state == LOTTERY_STATE.OPEN;
+        lottery_state = LOTTERY_STATE.OPEN;
     }
 
     function endLottery() public onlyOwner {
